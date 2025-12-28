@@ -1,29 +1,35 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
+@extends('layouts.app')
+
+@section('title', 'Edit Profil')
+
+@section('content')
+
+<div class="max-w-3xl mx-auto space-y-6">
+
+    {{-- ================= UPDATE PROFIL ================= --}}
+    <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-1">
+            Informasi Profil
         </h2>
-    </x-slot>
+        <p class="text-sm text-gray-500 mb-4">
+            Perbarui nama dan alamat email akun Anda
+        </p>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div>
-
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
-            </div>
-
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
-                </div>
-            </div>
-        </div>
+        @include('profile.partials.update-profile-information-form')
     </div>
-</x-app-layout>
+
+    <!-- {{-- ================= UPDATE PASSWORD ================= --}}
+    <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-1">
+            Ganti Password
+        </h2>
+        <p class="text-sm text-gray-500 mb-4">
+            Gunakan password yang kuat untuk menjaga keamanan akun
+        </p>
+
+        @include('profile.partials.update-password-form')
+    </div> -->
+
+</div>
+
+@endsection

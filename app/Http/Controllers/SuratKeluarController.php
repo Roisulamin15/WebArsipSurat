@@ -87,24 +87,29 @@ class SuratKeluarController extends Controller
 
     // ================== DELETE ==================
     public function destroy(SuratKeluar $suratKeluar)
-    {
-        if ($suratKeluar->file && file_exists(public_path('uploads/surat_keluar/'.$suratKeluar->file))) {
-            unlink(public_path('uploads/surat_keluar/'.$suratKeluar->file));
-        }
-
-        if ($suratKeluar->ocr_file && file_exists(public_path('uploads/ocr/surat_keluar/'.$suratKeluar->ocr_file))) {
-            unlink(public_path('uploads/ocr/surat_keluar/'.$suratKeluar->ocr_file));
-        }
-
-        $suratKeluar->delete();
-
-        ActivityLog::create([
-            'user_id' => auth()->id(),
-            'activity' => 'Menghapus Surat Keluar'
-        ]);
-
-        return back()->with('success', 'Surat keluar berhasil dihapus');
+{
+    if (auth()->user()->role !== 'admin') {
+        abort(403, 'Anda tidak punya akses');
     }
+
+    if ($suratKeluar->file) {
+        @unlink(public_path('uploads/surat_keluar/'.$suratKeluar->file));
+    }
+
+    if ($suratKeluar->ocr_file) {
+        @unlink(public_path('uploads/ocr/surat_keluar/'.$suratKeluar->ocr_file));
+    }
+
+    $suratKeluar->delete();
+
+    ActivityLog::create([
+        'user_id' => auth()->id(),
+        'activity' => 'Menghapus Surat Keluar'
+    ]);
+
+    return back()->with('success', 'Surat keluar berhasil dihapus');
+}
+
 
     // ================== VIEW FILE ==================
     public function viewFile($id)

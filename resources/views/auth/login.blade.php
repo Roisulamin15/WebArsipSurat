@@ -7,7 +7,7 @@
         {{-- Area putih kiri --}}
         <div class="relative z-10 w-1/2 bg-white rounded-r-[300px]
                     flex items-center justify-center">
-
+    
             <img src="{{ asset('image/logo kampus.png') }}"
                  alt="Logo Kampus"
                  class="w-56 opacity-90">

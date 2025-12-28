@@ -12,6 +12,8 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        $user = auth()->user();
+
         // ======================
         // TOTAL DATA
         // ======================
@@ -22,46 +24,53 @@ class DashboardController extends Controller
         // ======================
         // SURAT BULAN INI
         // ======================
-        $bulanSekarang = now()->month;
-        $tahunSekarang = now()->year;
+        $bulan = now()->month;
+        $tahun = now()->year;
 
         $totalSuratBulanIni =
-            SuratMasuk::whereMonth('created_at', $bulanSekarang)
-                ->whereYear('created_at', $tahunSekarang)
+            SuratMasuk::whereMonth('created_at', $bulan)
+                ->whereYear('created_at', $tahun)
                 ->count()
             +
-            SuratKeluar::whereMonth('created_at', $bulanSekarang)
-                ->whereYear('created_at', $tahunSekarang)
+            SuratKeluar::whereMonth('created_at', $bulan)
+                ->whereYear('created_at', $tahun)
                 ->count();
 
         // ======================
-        // GRAFIK SURAT PER BULAN
+        // GRAFIK (ADMIN ONLY)
         // ======================
-        $grafikMasuk = SuratMasuk::select(
-                DB::raw('MONTH(created_at) as bulan'),
-                DB::raw('COUNT(*) as total')
-            )
-            ->groupBy('bulan')
-            ->pluck('total', 'bulan');
+        $grafikSurat = collect();
 
-        $grafikKeluar = SuratKeluar::select(
-                DB::raw('MONTH(created_at) as bulan'),
-                DB::raw('COUNT(*) as total')
-            )
-            ->groupBy('bulan')
-            ->pluck('total', 'bulan');
+        if ($user->role === 'admin') {
+            $grafikMasuk = SuratMasuk::select(
+                    DB::raw('MONTH(created_at) as bulan'),
+                    DB::raw('COUNT(*) as total')
+                )
+                ->groupBy('bulan')
+                ->pluck('total', 'bulan');
 
-        $grafikSurat = collect(range(1, 12))->map(function ($bulan) use ($grafikMasuk, $grafikKeluar) {
-            return [
-                'bulan' => $bulan,
-                'total' => ($grafikMasuk[$bulan] ?? 0) + ($grafikKeluar[$bulan] ?? 0),
-            ];
-        });
+            $grafikKeluar = SuratKeluar::select(
+                    DB::raw('MONTH(created_at) as bulan'),
+                    DB::raw('COUNT(*) as total')
+                )
+                ->groupBy('bulan')
+                ->pluck('total', 'bulan');
+
+            $grafikSurat = collect(range(1, 12))->map(function ($bulan) use ($grafikMasuk, $grafikKeluar) {
+                return [
+                    'bulan' => $bulan,
+                    'total' => ($grafikMasuk[$bulan] ?? 0) + ($grafikKeluar[$bulan] ?? 0),
+                ];
+            });
+        }
 
         // ======================
-        // AKTIVITAS USER
+        // AKTIVITAS
         // ======================
         $aktivitas = ActivityLog::with('user')
+            ->when($user->role !== 'admin', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })
             ->latest()
             ->limit(10)
             ->get();

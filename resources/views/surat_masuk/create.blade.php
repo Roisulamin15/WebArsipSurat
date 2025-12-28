@@ -10,14 +10,6 @@
       class="bg-white p-6 rounded shadow max-w-xl space-y-3">
 
     @csrf
-
-    {{-- Nomor Surat --}}
-    <input type="text"
-           name="nomor_surat"
-           placeholder="Nomor Surat"
-           class="w-full border rounded px-3 py-2"
-           required>
-
     {{-- Nomor Agenda --}}
     <input type="text"
            name="nomor_agenda"

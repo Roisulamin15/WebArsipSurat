@@ -32,7 +32,6 @@ class SuratMasukController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nomor_surat'   => 'required',
             'nomor_agenda'  => 'required',
             'asal_surat'    => 'required',
             'tanggal_surat' => 'required|date',
@@ -63,7 +62,6 @@ class SuratMasukController extends Controller
         // SIMPAN DATA
         // ==================
         SuratMasuk::create([
-            'nomor_surat'   => $request->nomor_surat,
             'nomor_agenda'  => $request->nomor_agenda,
             'asal_surat'    => $request->asal_surat,
             'tanggal_surat' => $request->tanggal_surat,
@@ -87,24 +85,28 @@ class SuratMasukController extends Controller
 
     // ================== DELETE ==================
     public function destroy(SuratMasuk $suratMasuk)
-    {
-        if ($suratMasuk->file && file_exists(public_path('uploads/surat_masuk/'.$suratMasuk->file))) {
-            unlink(public_path('uploads/surat_masuk/'.$suratMasuk->file));
-        }
-
-        if ($suratMasuk->ocr_file && file_exists(public_path('uploads/ocr/surat_masuk/'.$suratMasuk->ocr_file))) {
-            unlink(public_path('uploads/ocr/surat_masuk/'.$suratMasuk->ocr_file));
-        }
-
-        $suratMasuk->delete();
-
-        ActivityLog::create([
-            'user_id'  => auth()->id(),
-            'activity' => 'Menghapus Surat Masuk'
-        ]);
-
-        return back()->with('success', 'Surat masuk berhasil dihapus');
+{
+    if (auth()->user()->role !== 'admin') {
+        abort(403, 'Anda tidak punya akses');
     }
+
+    if ($suratMasuk->file) {
+        @unlink(public_path('uploads/surat_masuk/'.$suratMasuk->file));
+    }
+
+    if ($suratMasuk->ocr_file) {
+        @unlink(public_path('uploads/ocr/surat_masuk/'.$suratMasuk->ocr_file));
+    }
+
+    $suratMasuk->delete();
+
+    ActivityLog::create([
+        'user_id' => auth()->id(),
+        'activity' => 'Menghapus Surat Masuk'
+    ]);
+
+    return back()->with('success', 'Surat masuk berhasil dihapus');
+}
 
     // ================== VIEW FILE ==================
     public function viewFile($id)

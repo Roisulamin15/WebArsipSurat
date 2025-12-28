@@ -11,13 +11,6 @@
 
     @csrf
 
-    {{-- Nomor (Internal) --}}
-    <input type="text"
-           name="nomor"
-           placeholder="Nomor"
-           class="w-full border rounded px-3 py-2"
-           required>
-
     {{-- Nomor Surat --}}
     <input type="text"
            name="nomor_surat"

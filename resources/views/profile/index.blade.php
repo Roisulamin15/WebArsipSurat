@@ -30,7 +30,9 @@
     <div class="space-y-3 text-sm">
         <div class="flex justify-between">
             <span class="text-gray-500">Role</span>
-            <span class="font-medium">Admin</span>
+            <span class="font-medium capitalize">
+                {{ $user->role }}
+            </span>
         </div>
 
         <div class="flex justify-between">
@@ -41,13 +43,23 @@
         </div>
     </div>
 
-    {{-- ACTION --}}
-    <div class="mt-6">
+    {{-- ACTION BUTTON --}}
+    <div class="mt-6 flex gap-3">
+
         <a href="{{ route('profile.edit') }}"
-           class="inline-block px-4 py-2 bg-[#7A1E1E]
-                  text-white rounded hover:bg-[#4B0F0F]">
+           class="flex-1 text-center px-4 py-2
+                  bg-[#7A1E1E] text-white rounded
+                  hover:bg-[#4B0F0F] transition">
             Edit Profil
         </a>
+
+        <a href="{{ route('profile.password') }}"
+           class="flex-1 text-center px-4 py-2
+                  bg-gray-600 text-white rounded
+                  hover:bg-gray-800 transition">
+            Edit Password
+        </a>
+
     </div>
 
 </div>
